@@ -4,7 +4,6 @@
  * @version 1.0
  */
 
-
 $dirname = dirname(__FILE__);
 
 require $dirname."/lib/feedgenerator/FeedGenerator.php";
@@ -67,12 +66,11 @@ if (!empty($_GET["multipleURLs"]))
     }
 }
 
-// foreach ($ads AS $ad) {
-//     $ad->pprint();
-// }
 
-if (count($ads)) {
-    foreach ($ads AS $ad) {
+$sortedads = Lbc::sortAds($ads);
+
+if (count($sortedads)) {
+    foreach ($sortedads AS $ad) {
         $item = new FeedItem(
             md5($ad->getId().$ad->getDate()),
             $ad->getTitle(),

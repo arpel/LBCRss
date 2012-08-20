@@ -262,6 +262,16 @@ class Lbc
         $url = preg_replace("#o=[0-9]*&?#", "", $url);
         return $url;
     }
+
+    public static function adcmp($a, $b){ 
+        return strcmp($b->getDate(), $a->getDate()); 
+    }
+
+    public static function sortAds($ads)
+    {
+        uasort($ads, array("Lbc", "adcmp"));
+        return $ads;
+    }
 }
 
 
