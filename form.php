@@ -30,6 +30,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!empty($values["cities"])) {
             $query["cities"] = $values["cities"];
         }
+        if (!empty($values["multipleURLs"])) {
+            $query["multipleURLs"] = $values["multipleURLs"];
+        }
+        if (!empty($values["queryname"])) {
+            $query["queryname"] = $values["queryname"];
+        }
         $query["price_strict"] = isset($values["price_strict"])?
             (int)(bool)$values["price_strict"]:0;
         header("LOCATION: ./?".http_build_query($query));
@@ -40,6 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
     <head>
         <title>Flux RSS des annonces Leboncoin</title>
+        <link rel="stylesheet" href="main.css" type="text/css">
         <meta charset="utf-8">
     </head>
     <body>
@@ -50,14 +57,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             Il ne sera pas possible de générer les flux RSS.
         </p>
         <?php endif; ?>
+        <div id="stylized" class="myform">
         <form action="" method="post" style="width: 600px;">
             <fieldset>
                 <legend>Génération d'un flux RSS</legend>
                 <dl>
+
+                    <dt><label for="queryname">
+                        Indiquer un nom pour cette recherche</label></dt>
+                    <dd><input type="text" id="queryname" name="queryname" value="<?php
+                        echo $values["queryname"]; ?>" size="75" /></dd>
+
                     <dt><label for="url">
                         Indiquer l'adresse de recherche Leboncoin</label></dt>
                     <dd><input type="text" id="url" name="url" value="<?php
-                        echo $values["url"]; ?>" size="75" /></dd>
+                        echo $values["url"]; ?>" size="125" /></dd>
                     <dt>
                         <label>Filtre sur le prix</label>
                     <dt>
@@ -87,9 +101,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             echo htmlspecialchars($values["cities"]) ?></textarea>
                     </dd>
                     <dt>&nbsp;</dt>
+
+                    <dt><label for="multipleURLs">Recherches a ajouter a la recheche principale</label></dt>
+                    <dd>
+                        <textarea id="multipleURLs" name="multipleURLs" cols="125" rows="10"><?php
+                            echo htmlspecialchars($values["multipleURLs"]) ?></textarea>
+                    </dd>
+                    <dt>&nbsp;</dt>
+
                     <dd><input type="submit" value="Enregistrer" /></dd>
                 </dl>
             </fieldset>
         </form>
+    </div>
     </body>
 </html>

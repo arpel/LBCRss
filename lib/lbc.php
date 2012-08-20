@@ -242,6 +242,13 @@ class Lbc_Ad
     {
         return $this->_urgent;
     }
+
+    public function pprint()
+    {
+        printf("id : %d &nbsp;", $this->_id);
+        printf("  title : %s &nbsp", $this->_title);
+        printf("  price : %s &nbsp", $this->_price);
+    }
 }
 
 class Lbc

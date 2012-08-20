@@ -24,16 +24,16 @@ try {
     exit;
 }
 
-
-$content = file_get_contents($_GET["url"]);
-$ads = Lbc_Parser::process($content, $_GET);
-
-$title = "LeBonCoin";
-$urlParams = parse_url($_GET["url"]);
-if (!empty($urlParams["query"])) {
-    parse_str($urlParams["query"], $aQuery);
-    if (!empty($aQuery["q"])) {
-        $title .= " - ".$aQuery["q"];
+if (!empty($_GET["queryname"])) {
+    $title = "LeBonCoin"." - ".$_GET["queryname"];
+} else {
+    $title = "LeBonCoin";
+    $urlParams = parse_url($_GET["url"]);
+    if (!empty($urlParams["query"])) {
+        parse_str($urlParams["query"], $aQuery);
+        if (!empty($aQuery["q"])) {
+            $title .= " - ".$aQuery["q"];
+        }
     }
 }
 
@@ -47,6 +47,30 @@ $feeds->setChannelLink(
 $feeds->setLink("http://www.leboncoin.fr");
 $feeds->setDescription("Flux RSS de la recherche : ".htmlspecialchars($_GET["url"]));
 
+$content = file_get_contents($_GET["url"]);
+$ads = Lbc_Parser::process($content, $_GET);
+
+if (!empty($_GET["multipleURLs"])) 
+{
+    $additionnalURLs = array(explode("\n", $_GET["multipleURLs"]));
+
+    if (trim($_GET["multipleURLs"])) {
+            $additionnalURLs = array_map("trim", explode("\n", $_GET["multipleURLs"]));
+    }
+
+    foreach ($additionnalURLs AS $newURL) {
+        $newcontent = file_get_contents($newURL);
+        $newads = Lbc_Parser::process($newcontent, $_GET);
+        if (count($newads)) {
+            $ads = array_merge($ads, $newads);
+        }
+    }
+}
+
+// foreach ($ads AS $ad) {
+//     $ad->pprint();
+// }
+
 if (count($ads)) {
     foreach ($ads AS $ad) {
         $item = new FeedItem(
@@ -59,4 +83,5 @@ if (count($ads)) {
         $feeds->addItem($item);
     }
 }
+
 $feeds->display();
