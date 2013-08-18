@@ -8,6 +8,9 @@ $dirname = dirname(__FILE__);
 
 require $dirname."/lib/feedgenerator/FeedGenerator.php";
 require $dirname."/lib/lbc.php";
+require $dirname."/lib/proxyWrapper.php";
+
+$getC = new proxyWrapper();
 
 date_default_timezone_set("Europe/Paris");
 

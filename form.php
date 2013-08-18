@@ -1,9 +1,11 @@
 <?php
 // vérifie la possibilité d'effectuer des requêtes distantes
 $error = false;
-if (!file_get_contents("http://www.leboncoin.fr")) {
+
+if (!$getC->file_get_contents('http://www.leboncoin.fr/')) {
     $error = true;
 }
+
 $values = array(
     "url" => "", "price_min" => "", "price_max" => "", "price_strict" => false,
     "cities" => ""
