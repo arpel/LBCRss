@@ -49,7 +49,7 @@ $feeds->setChannelLink(
 $feeds->setLink("http://www.leboncoin.fr");
 $feeds->setDescription("Flux RSS de la recherche : ".htmlspecialchars($_GET["url"]));
 
-$content = file_get_contents($_GET["url"]);
+$content = $getC->file_get_contents($_GET["url"]);
 $ads = Lbc_Parser::process($content, $_GET);
 
 if (!empty($_GET["multipleURLs"])) 
@@ -61,7 +61,7 @@ if (!empty($_GET["multipleURLs"]))
     }
 
     foreach ($additionnalURLs AS $newURL) {
-        $newcontent = file_get_contents($newURL);
+        $newcontent = $getC->file_get_contents($newURL);
         $newads = Lbc_Parser::process($newcontent, $_GET);
         if (count($newads)) {
             $ads = array_merge($ads, $newads);

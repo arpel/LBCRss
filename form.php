@@ -2,7 +2,7 @@
 // vérifie la possibilité d'effectuer des requêtes distantes
 $error = false;
 
-if (!$getC->file_get_contents('http://www.leboncoin.fr/')) {
+if (!$getC->file_get_contents('http://www.leboncoin.fr/', true)) {
     $error = true;
 }
 
