@@ -299,11 +299,11 @@ class Lbc_Parser
             "jan" => 1, "fév" => 2, "mars" => 3, "avr" => 4,
             "mai" => 5, "juin" => 6, "juillet" => 7, "août" => 8,
             "sept" => 9, "oct" => 10, "nov" => 11,
-            "dec" => 12
+            "déc" => 12
         );
 
         foreach ($divsAd AS $result) {
-            if (false === strpos($result->getAttribute("class"), "ad-lbc")) {
+            if (false === strpos($result->getAttribute("class"), "lbc")) {
                 continue;
             }
             $ad = new Lbc_Ad();

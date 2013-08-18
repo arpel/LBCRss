@@ -1,4 +1,9 @@
 
+## Version 1.2.2 - 11/01/2013
+
+ * correction : changement de classe CSS "ad-lbc" => "lbc" (crash parser).
+ * correction : mois de décembre non détecté ce qui exclu certaines anciennes annonces.
+
 ## Version 1.2.1 - 18/08/2012
 
  * correction : problème d'URL avec certaine recherche.
