@@ -28,7 +28,8 @@ class proxyWrapper
             $this->buildOpts($this->configData["general"]["bestproxy"]);
         }
         else {
-            $this->findbestproxy("http://www.google.com");
+            //$this->findbestproxy("http://www.google.com");
+            $this->buildOpts(0);
         }
     }
 
@@ -45,7 +46,7 @@ class proxyWrapper
             'http' => array (
                 'proxy' => $this->proxyList[$proxyindex],
                 'request_fulluri' => true,
-                'timeout' => 5
+                'timeout' => 2
             )
         );
     }
@@ -72,29 +73,30 @@ class proxyWrapper
     }
 
     public function findbestproxy($url){
+        $status = "Starting proxy selection </br>";
         $index = 0;
         do {
-            printf('Trying proxy at index %d ', $index);
+            $status .= sprintf('  Trying proxy at index %d </br>', $index);
             $this->buildOpts($index);
 
             $content = $this->proxiedFileGetContent($url);
 
             if($content){
-                printf('Found working proxy at index %d ', $index);
+                $status .= sprintf('    Found working proxy at index %d </br>', $index);
                 //print $content;
                 
                 $this->configData["general"]["bestproxy"] = $index;
                 $this->configSave();
                 
                 $this->buildOpts($index);
-                return $content;
+                return $status;
             }
             else {
                 $index++;
                 if($index >= sizeof($this->proxyList))
                 {
-                    print "Failed to get content with proxy ... ";
-                    return false;
+                    $status .= sprintf("Failed to get content with proxy ... </br>");
+                    return $status;
                 }
                 
             }

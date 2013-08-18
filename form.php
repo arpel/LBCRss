@@ -2,7 +2,11 @@
 // vérifie la possibilité d'effectuer des requêtes distantes
 $error = false;
 
-if (!$getC->file_get_contents('http://www.leboncoin.fr/', true)) {
+if (!empty($_POST["selectproxy"])) {
+    $findproxystatus = $getC->findbestproxy("http://www.google.com");
+}
+
+if (!$getC->file_get_contents('http://www.leboncoin.fr/')) {
     $error = true;
 }
 
@@ -10,6 +14,7 @@ $values = array(
     "url" => "", "price_min" => "", "price_max" => "", "price_strict" => false,
     "cities" => ""
 );
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $values = array_merge($values, array_map("trim", $_POST));
     if (empty($values["url"])) {
@@ -58,6 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             Les connexions distantes ne semblent pas actives sur cet hébergement.
             Il ne sera pas possible de générer les flux RSS.
         </p>
+        <?php endif; ?>
+        <?php if ($findproxystatus) : ?>
+            <p style="width: 600px;"><?php echo $findproxystatus ?></p>
         <?php endif; ?>
         <div id="stylized" class="myform">
         <form action="" method="post" style="width: 600px;">
@@ -113,6 +121,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <dd><input type="submit" value="Enregistrer" /></dd>
                 </dl>
+            </fieldset>
+        </form>
+    </div>
+
+    <div id="stylized" class="myform">
+        <form action="" method="post" style="width: 600px;">
+            <fieldset>
+                <legend>Sélectionner le meilleur Proxy</legend>
+                <input type="hidden" id="selectproxy" name="selectproxy" value="1"/>
+                <input type="submit" value="Find proxy" />
             </fieldset>
         </form>
     </div>
