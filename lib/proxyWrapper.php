@@ -25,11 +25,10 @@ class proxyWrapper
         $this->addDefaultProxies();
 
         if($this->configData["general"]["bestproxy"] >= 0) {
-            $this->buildOpts($this->configData["general"]["bestproxy"]);
+            $this->proxyindex = $this->configData["general"]["bestproxy"];
         }
         else {
-            //$this->findbestproxy("http://www.google.com");
-            $this->buildOpts(0);
+            $this->proxyindex = 0;
         }
     }
 
@@ -41,45 +40,27 @@ class proxyWrapper
         fclose($fh);
     }
 
-    public function buildOpts($proxyindex){
-        $this->opts = array(
-            'http' => array (
-                'proxy' => $this->proxyList[$proxyindex],
-                'request_fulluri' => true,
-                'timeout' => 2
-            )
-        );
-    }
-
     public function addDefaultProxies() {
-        for($index = 0; $index < sizeof($this->configData["proxyList"]); $index++){
-            $this->proxyList[] = $this->configData["proxyList"][$index];
-        }
+        $this->proxyList = $this->configData["proxyList"];
     }
 
-    public function file_get_contents($filename, $findbestproxy = false){
-        if ($this->_useProxy){
-            if($findbestproxy){
-                $content = $this->findbestproxy($filename);
-            } else
-            {
-                $content = $this->proxiedFileGetContent($filename);
-            }
-            return $content;
+    public function file_get_contents($filename){
+    if ($this->_useProxy){
+            return $this->proxiedFileGetContent($filename);
         }
         else {
             return file_get_contents($filename);
         }
     }
 
-    public function findbestproxy($url){
+    public function findbestproxy(){
         $status = "Starting proxy selection </br>";
         $index = 0;
         do {
             $status .= sprintf('  Trying proxy at index %d </br>', $index);
-            $this->buildOpts($index);
+            $this->proxyindex = $index;
 
-            $content = $this->proxiedFileGetContent($url);
+            $content = $this->proxiedFileGetContent('http://www.mon-ip.com/');
 
             if($content){
                 $status .= sprintf('    Found working proxy at index %d </br>', $index);
@@ -88,7 +69,7 @@ class proxyWrapper
                 $this->configData["general"]["bestproxy"] = $index;
                 $this->configSave();
                 
-                $this->buildOpts($index);
+                $this->proxyindex = $index;
                 return $status;
             }
             else {
@@ -103,9 +84,49 @@ class proxyWrapper
         } while(true);
     }
 
+
     public function proxiedFileGetContent($url){
-        $ctx = stream_context_create($this->opts);            
-        $content = file_get_contents($url, false, $ctx);
-        return $content;
+        $result = $this->proxiedFileGetContentCurl($url);
+
+        if (empty($result['ERR'])) {
+            //print $result['EXE'];
+            return $result['EXE'];
+        } else {
+            print $result['ERR'];
+            return false;
+        }
+    }
+
+    public function proxiedFileGetContentCurl($url){
+        $proxy = $this->proxyList[$this->proxyindex]["ip"];
+        $proxyLoginPass= "";
+        $referer = 'http://www.google.fr/';
+        $agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.8) Gecko/2009032609 Firefox/3.0.8';
+        $header = 1;
+        $timeout = 2;
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+        curl_setopt($ch, CURLOPT_PROXY, $proxy);
+        if($proxyLoginPass!= "")
+        {
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, '$proxyLoginPass');
+        }
+        curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        curl_setopt($ch, CURLOPT_REFERER, $referer);
+        curl_setopt($ch, CURLOPT_USERAGENT, $agent);
+     
+        $result['EXE'] = curl_exec($ch);
+        $result['INF'] = curl_getinfo($ch);
+        $result['ERR'] = curl_error($ch);
+     
+        curl_close($ch);
+     
+        return $result;
     }
 }

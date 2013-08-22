@@ -3,7 +3,7 @@
 $error = false;
 
 if (!empty($_POST["selectproxy"])) {
-    $findproxystatus = $getC->findbestproxy("http://www.google.com");
+    $findproxystatus = $getC->findbestproxy();
 }
 
 if (!$getC->file_get_contents('http://www.leboncoin.fr/')) {
