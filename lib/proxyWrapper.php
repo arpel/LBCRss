@@ -93,6 +93,7 @@ class proxyWrapper
             return $result['EXE'];
         } else {
             print $result['ERR'];
+            print("</br>");
             return false;
         }
     }
